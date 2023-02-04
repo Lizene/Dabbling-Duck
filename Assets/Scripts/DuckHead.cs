@@ -4,43 +4,53 @@ using UnityEngine;
 
 public class DuckHead : MonoBehaviour
 {
-    public GameObject neckPrefab;
+    public GameObject headPrefab, neckPrefab;
     public float baseControlledSpeed, mouseDetectRadius, turnSmoothTime;
     Camera cam;
-    Vector2 pos2, moveDir;
+    [System.NonSerialized] public Vector2 moveDir;
+    [System.NonSerialized] public float splitTimer;
+    Vector2 pos2;
     float currentVelocity;
     Transform detectCircle;
-    GameObject neck;
-    LineRenderer neckRend;
-    List<Vector3> neckPoints;
-
+    DuckParent parentScript;
+    bool moveEnabled = true;
     void Start()
     {
         detectCircle = transform.GetChild(0);
         detectCircle.localScale = Vector3.one * 2 * mouseDetectRadius;
         cam = Camera.main;
-        moveDir = Vector2.down;
-        neck = Instantiate(neckPrefab,GameObject.Find("Necks").transform);
-        neckRend = neck.GetComponent<LineRenderer>();
-        neckPoints = new List<Vector3>();
-        neckPoints.Add(neckRend.GetPosition(0));
-        InvokeRepeating("AddNeckPoint", 0.2f, 0.2f);
+        parentScript = transform.GetComponentInParent<DuckParent>();
     }
 
     void Update()
     {
+        Split();
         LookAtMouse();
         MoveToMouse();
     }
-
+    void Split()
+    {
+        if (splitTimer > 0f) { splitTimer -= Time.deltaTime; }
+        if (!(Input.GetKeyDown(KeyCode.Space) && parentScript.chosenChild == transform.GetSiblingIndex())) { return; }
+        var newHead = Instantiate(headPrefab, transform.position, transform.rotation, transform.parent);
+        newHead.name = "Duck Head "+newHead.transform.GetSiblingIndex().ToString();
+        var headScript = newHead.GetComponent<DuckHead>();
+        var newAngle = (transform.eulerAngles.z + 45f) * Mathf.Deg2Rad;
+        moveDir = new Vector2(Mathf.Cos(newAngle), Mathf.Sin(newAngle));
+        headScript.moveDir = Vector2.Perpendicular(moveDir);
+        splitTimer = 1.5f;
+        headScript.splitTimer = 1.5f;
+    }
     void LookAtMouse()
     {
         var mouseInput = cam.ScreenToWorldPoint(Input.mousePosition);
         var cursorPos = new Vector2(mouseInput.x, mouseInput.y);
         pos2 = new Vector2(transform.position.x, transform.position.y);
         var duckToCursor = cursorPos - pos2;
-        if (duckToCursor.magnitude <= mouseDetectRadius) 
+        moveEnabled = duckToCursor.magnitude > 0.5f;
+        if (duckToCursor.magnitude <= mouseDetectRadius && splitTimer <= 0f) 
         {
+            parentScript.chosenChild = transform.GetSiblingIndex();
             moveDir = duckToCursor.normalized;
         }
         var duckToCursorAngle = Vector2.SignedAngle(Vector2.up, moveDir);
@@ -49,13 +59,8 @@ public class DuckHead : MonoBehaviour
     }
     void MoveToMouse()
     {
+        if (!moveEnabled) { return; }
         var moveVector = moveDir * baseControlledSpeed * Time.deltaTime;
         transform.position += new Vector3(moveVector.x, moveVector.y, 0);
-    }
-    void AddNeckPoint()
-    {
-        neckPoints.Add(new Vector3(pos2.x, pos2.y, 0));
-        print(neckPoints.Count);
-        neckRend.SetPositions(neckPoints.ToArray());
     }
 }
