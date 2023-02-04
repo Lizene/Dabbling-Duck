@@ -5,7 +5,7 @@ using UnityEngine;
 public class DuckHead : MonoBehaviour
 {
     public GameObject headPrefab, neckPrefab;
-    public float baseControlledSpeed, detectRadius, turnSmoothTime;
+    public float baseControlledSpeed, baseUncontrolledSpeed, detectRadius, turnSmoothTime;
     Camera cam;
     [System.NonSerialized] public Vector2 moveDir;
     [System.NonSerialized] public float splitTimer;
@@ -16,6 +16,8 @@ public class DuckHead : MonoBehaviour
     Transform detectCircle;
     DuckParent parentScript;
     bool moveEnabled = true, controlled;
+    const float screenHorizontal = 15f;
+    const float screenVertical = 8.5f;
     
     void Start()
     {
@@ -44,6 +46,11 @@ public class DuckHead : MonoBehaviour
         splitTimer = 1.5f;
         headScript.splitTimer = 1.5f;
     }
+    bool isOutOfBounds()
+    {
+        var pos = transform.position;
+        return pos.x < -screenHorizontal || pos.x > screenHorizontal || pos.y < -screenVertical || pos.y > screenVertical;
+    }
     void Look()
     {
         var mouseInput = cam.ScreenToWorldPoint(Input.mousePosition);
@@ -51,7 +58,7 @@ public class DuckHead : MonoBehaviour
         pos2 = new Vector2(transform.position.x, transform.position.y);
         var duckToCursor = cursorPos - pos2;
         moveEnabled = true;
-        if (duckToCursor.magnitude <= detectRadius && splitTimer <= 0f && Input.GetMouseButton(0)) 
+        if (duckToCursor.magnitude <= detectRadius && splitTimer <= 0f && Input.GetMouseButton(0) && !isOutOfBounds()) 
         {
             if (duckToCursor.magnitude < 0.5f) { moveEnabled = false; }
             controlled = true;
@@ -64,7 +71,6 @@ public class DuckHead : MonoBehaviour
             if (foodSeen)
             {
                 moveDir = (targetedFood.transform.position - transform.position).normalized;
-                
             }
         }
         var duckToCursorAngle = Vector2.SignedAngle(Vector2.up, moveDir);
@@ -75,15 +81,38 @@ public class DuckHead : MonoBehaviour
     void Move()
     {
         if (!moveEnabled) { return; }
-        var moveVector = moveDir * baseControlledSpeed * Time.deltaTime;
-        transform.position += new Vector3(moveVector.x, moveVector.y, 0);
+        var moveVector = moveDir * (controlled?baseControlledSpeed:baseUncontrolledSpeed) * Time.deltaTime;
+        var moveVector3 = new Vector3(moveVector.x, moveVector.y, 0);
+        transform.position += moveVector3;
+        if (isOutOfBounds())
+        {
+            print("outOfBounds, " + Time.time.ToString() + ", " + moveDir.ToString());
+            if (!controlled)
+            {
+                var pos = transform.position;
+                if (pos.x < -screenHorizontal || pos.x > screenHorizontal)
+                {
+                    moveDir = Vector2.Reflect(moveDir, Vector2.right);
+                }
+                if (pos.y < -screenVertical || pos.y > screenVertical)
+                {
+                    moveDir = Vector2.Reflect(moveDir, Vector2.up);
+                }
+            }
+            transform.position -= moveVector3;
+        }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Food"))
+        if (collision.gameObject.CompareTag("Good Food"))
         {
             Destroy(collision.gameObject);
             //Gain energy
+        }
+        else if (collision.gameObject.CompareTag("Bad Food"))
+        {
+            Destroy(collision.gameObject);
+            //Lose energy
         }
     }
 }
