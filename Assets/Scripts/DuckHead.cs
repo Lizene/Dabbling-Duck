@@ -5,6 +5,7 @@ using UnityEngine;
 public class DuckHead : MonoBehaviour
 {
     public GameObject headPrefab, neckPrefab;
+    public Sprite openHeadSprite;
     public float baseControlledSpeed, baseUncontrolledSpeed, detectRadius, turnSmoothTime;
     Camera cam;
     [System.NonSerialized] public Vector2 moveDir;
@@ -17,14 +18,23 @@ public class DuckHead : MonoBehaviour
     DuckParent parentScript;
     bool moveEnabled = true, controlled;
     const float screenHorizontal = 15f;
-    const float screenVertical = 8.5f;
-    
+    const float screenDown = 7.5f;
+    const float screenUp = 6.6f;
+    GameManager gameManager;
+    SpriteRenderer spriteRend;
+    private bool headOpen;
+    private bool headOpenLastFrame;
+    Sprite closedHeadSprite;
+
     void Start()
     {
         detectCircle = transform.GetChild(0);
         detectCircle.localScale = Vector3.one * 2 * detectRadius;
         cam = Camera.main;
         parentScript = transform.GetComponentInParent<DuckParent>();
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+        spriteRend = GetComponent<SpriteRenderer>();
+        closedHeadSprite = spriteRend.sprite;
     }
 
     void Update()
@@ -49,7 +59,7 @@ public class DuckHead : MonoBehaviour
     bool isOutOfBounds()
     {
         var pos = transform.position;
-        return pos.x < -screenHorizontal || pos.x > screenHorizontal || pos.y < -screenVertical || pos.y > screenVertical;
+        return pos.x < -screenHorizontal || pos.x > screenHorizontal || pos.y < -screenDown || pos.y > screenUp;
     }
     void Look()
     {
@@ -58,6 +68,7 @@ public class DuckHead : MonoBehaviour
         pos2 = new Vector2(transform.position.x, transform.position.y);
         var duckToCursor = cursorPos - pos2;
         moveEnabled = true;
+        headOpen = false;
         if (duckToCursor.magnitude <= detectRadius && splitTimer <= 0f && Input.GetMouseButton(0) && !isOutOfBounds()) 
         {
             if (duckToCursor.magnitude < 0.5f) { moveEnabled = false; }
@@ -68,11 +79,26 @@ public class DuckHead : MonoBehaviour
         else
         {
             controlled = false;
+            if (targetedFood = null) { foodSeen = false; }
             if (foodSeen)
             {
-                moveDir = (targetedFood.transform.position - transform.position).normalized;
+                var duckToFood = targetedFood.transform.position - transform.position;
+                moveDir = duckToFood.normalized;
             }
         }
+        if (foodSeen)
+        {
+            var duckToFood = targetedFood.transform.position - transform.position;
+            if (duckToFood.magnitude < 1f)
+            {
+                headOpen = true;
+            }
+        }
+        if (headOpen != headOpenLastFrame)
+        {
+            spriteRend.sprite = headOpen ? openHeadSprite : closedHeadSprite;
+        }
+        headOpenLastFrame = headOpen;
         var duckToCursorAngle = Vector2.SignedAngle(Vector2.up, moveDir);
         var smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.z, duckToCursorAngle, ref currentVelocity, turnSmoothTime);
         transform.eulerAngles = new Vector3(0, 0, smoothAngle);
@@ -86,7 +112,6 @@ public class DuckHead : MonoBehaviour
         transform.position += moveVector3;
         if (isOutOfBounds())
         {
-            print("outOfBounds, " + Time.time.ToString() + ", " + moveDir.ToString());
             if (!controlled)
             {
                 var pos = transform.position;
@@ -94,7 +119,7 @@ public class DuckHead : MonoBehaviour
                 {
                     moveDir = Vector2.Reflect(moveDir, Vector2.right);
                 }
-                if (pos.y < -screenVertical || pos.y > screenVertical)
+                if (pos.y < -screenDown || pos.y > screenUp)
                 {
                     moveDir = Vector2.Reflect(moveDir, Vector2.up);
                 }
@@ -107,12 +132,14 @@ public class DuckHead : MonoBehaviour
         if (collision.gameObject.CompareTag("Good Food"))
         {
             Destroy(collision.gameObject);
-            //Gain energy
+            foodSeen = false;
+            gameManager.EatFood();
         }
         else if (collision.gameObject.CompareTag("Bad Food"))
         {
             Destroy(collision.gameObject);
-            //Lose energy
+            foodSeen = false;
+            gameManager.LoseLife();
         }
     }
 }
