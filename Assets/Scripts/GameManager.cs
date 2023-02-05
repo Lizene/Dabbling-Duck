@@ -7,20 +7,14 @@ public class GameManager : MonoBehaviour
 {
     Transform canvas, hearts;
     TextMeshProUGUI text;
-    public int lives;
+    public int lives, foodEaten;
     int maxLives;
-    int foodEaten = 0;
     void Start()
     {
         canvas = GameObject.Find("Canvas").transform;
         hearts = canvas.GetChild(0);
         text = canvas.GetChild(1).GetComponent<TextMeshProUGUI>();
         maxLives = lives;
-    }
-
-    void Update()
-    {
-        
     }
     public void GainLife()
     {
