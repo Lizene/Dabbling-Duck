@@ -132,7 +132,6 @@ public class DuckHead : MonoBehaviour
         moveDir = new Vector2(Mathf.Cos(newAngle), Mathf.Sin(newAngle));
         headScript.moveDir = Vector2.Perpendicular(moveDir);
         splitTimer = splitTime;
-        //headScript.splitTimer = splitTime;
     }
 
     bool isOutOfBounds()

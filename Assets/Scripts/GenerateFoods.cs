@@ -33,7 +33,7 @@ public class GenerateFoods : MonoBehaviour
                 int prefabIndex = UnityEngine.Random.Range(0,5);
                 Vector3 pointPos = new Vector3 (point.x,point.y,0);
                 Vector2 foodPos = transform.position + pointPos;
-                Instantiate(prefabList[prefabIndex], foodPos, Quaternion.identity, transform.parent);
+                Instantiate(prefabList[prefabIndex], foodPos, Quaternion.identity, transform);
             }
         }
     }

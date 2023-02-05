@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
         canvas.GetChild(2).gameObject.SetActive(true);
         foreach (DuckHead script in heads.GetComponentsInChildren<DuckHead>())
         {
-            //Instantiate(explosion, script.transform.position, Quaternion.identity);
+            Instantiate(explosion, script.transform.position-Vector3.forward, Quaternion.identity);
             script.enabled = false;
         }
     }
