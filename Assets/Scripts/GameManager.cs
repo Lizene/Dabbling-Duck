@@ -47,5 +47,10 @@ public class GameManager : MonoBehaviour
             Instantiate(explosion, script.transform.position-Vector3.forward, Quaternion.identity);
             script.enabled = false;
         }
+        Invoke("SwitchScene", 4f);
+    }
+    void SwitchScene()
+    {
+        SceneLoader.loadScene("Splash Scene");
     }
 }

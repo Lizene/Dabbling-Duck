@@ -11974,14 +11974,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1343219558, guid: c6f2d3bca3b6f704eafdcccb4b175e62, type: 3}
-      propertyPath: radius
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1039244489334226324, guid: c6f2d3bca3b6f704eafdcccb4b175e62, type: 3}
-      propertyPath: radius
-      value: 7
-      objectReference: {fileID: 0}
     - target: {fileID: 1039244489334226325, guid: c6f2d3bca3b6f704eafdcccb4b175e62, type: 3}
       propertyPath: m_Name
       value: FoodGenerator
