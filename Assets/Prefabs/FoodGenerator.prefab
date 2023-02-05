@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1039244489334226327}
   - component: {fileID: 1039244489334226324}
+  - component: {fileID: 1343219558}
   m_Layer: 0
   m_Name: FoodGenerator
   m_TagString: Untagged
@@ -46,10 +47,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Prefab1: {fileID: 8212404431167064562, guid: 682cfce4babc67f47a64c423b63ada8a, type: 3}
   Prefab2: {fileID: 8212404431167064562, guid: 9d546208b7909e24da61c46740c72a76, type: 3}
+  Prefab3: {fileID: 8212404431167064562, guid: 682cfce4babc67f47a64c423b63ada8a, type: 3}
+  Prefab4: {fileID: 8212404431167064562, guid: 15ee283cc7d44ab44a5cd17fca4381f0, type: 3}
+  Prefab5: {fileID: 8212404431167064562, guid: 9d546208b7909e24da61c46740c72a76, type: 3}
+  Prefab6: {fileID: 8212404431167064562, guid: 682cfce4babc67f47a64c423b63ada8a, type: 3}
+  radius: 4
+  regionSize: {x: 25.9, y: 13.6}
+  rejectionSamples: 30
+  displayRadius: 0.49
+--- !u!114 &1343219558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039244489334226325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21ce48c561d32804f960b8bcf328bff1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Prefab1: {fileID: 8212404431167064562, guid: c78852f76a6176e48a7601c195254f0e, type: 3}
+  Prefab2: {fileID: 8212404431167064562, guid: 3521debbaca35d04bac03241dbb6fa66, type: 3}
   Prefab3: {fileID: 8212404431167064562, guid: c78852f76a6176e48a7601c195254f0e, type: 3}
   Prefab4: {fileID: 8212404431167064562, guid: 3521debbaca35d04bac03241dbb6fa66, type: 3}
   Prefab5: {fileID: 8212404431167064562, guid: b0790eb75a2d4404e921eba65e3e48d5, type: 3}
-  radius: 1.78
+  Prefab6: {fileID: 8212404431167064562, guid: b0790eb75a2d4404e921eba65e3e48d5, type: 3}
+  radius: 3
   regionSize: {x: 25.9, y: 13.6}
   rejectionSamples: 30
   displayRadius: 0.49
