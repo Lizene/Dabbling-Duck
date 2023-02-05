@@ -38,7 +38,7 @@ public class DuckHead : MonoBehaviour
         parentScript = transform.GetComponentInParent<DuckParent>();
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         spriteRend = GetComponent<SpriteRenderer>();
-        headOpenLastFrame = !(firstHead||splitWithSpace);
+        spriteRend.sprite = closedHeadSprite;
     }
 
     void Update()
@@ -103,7 +103,7 @@ public class DuckHead : MonoBehaviour
     void Move()
     {
         if (!moveEnabled) { return; }
-        var moveVector = moveDir * (controlled?baseControlledSpeed:baseUncontrolledSpeed) * Time.deltaTime;
+        var moveVector = moveDir * (splitTimer < 0f ? (controlled ? baseControlledSpeed : baseUncontrolledSpeed) : baseControlledSpeed) * Time.deltaTime;
         var moveVector3 = new Vector3(moveVector.x, moveVector.y, 0);
         transform.position += moveVector3;
         if (isOutOfBounds())

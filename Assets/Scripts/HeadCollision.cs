@@ -50,7 +50,6 @@ public class HeadCollision : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Head"))
         {
-            print("Heads Collided");
             var otherHeadScript = collision.gameObject.GetComponentInParent<DuckHead>();
             var collisionNormal = (headScript.moveDir + otherHeadScript.moveDir).normalized;
             print(collisionNormal);
