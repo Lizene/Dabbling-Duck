@@ -27,9 +27,6 @@ public class DuckHead : MonoBehaviour
     const float screenHorizontal = 15f, screenDown = 7.5f, screenUp = 6.6f;
     float smoothTurnCurrentVelocity;
     
-
-
-
     void Start()
     {
         detectCircle = transform.GetChild(0);
@@ -39,6 +36,8 @@ public class DuckHead : MonoBehaviour
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         spriteRend = GetComponent<SpriteRenderer>();
         spriteRend.sprite = closedHeadSprite;
+        moveDir = Vector2.down;
+        splitTimer = splitTime;
     }
 
     void Update()
@@ -133,8 +132,9 @@ public class DuckHead : MonoBehaviour
         moveDir = new Vector2(Mathf.Cos(newAngle), Mathf.Sin(newAngle));
         headScript.moveDir = Vector2.Perpendicular(moveDir);
         splitTimer = splitTime;
-        headScript.splitTimer = splitTime;
+        //headScript.splitTimer = splitTime;
     }
+
     bool isOutOfBounds()
     {
         var pos = transform.position;
