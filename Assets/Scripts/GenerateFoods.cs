@@ -11,6 +11,7 @@ public class GenerateFoods : MonoBehaviour
     public GameObject Prefab3;
     public GameObject Prefab4;
     public GameObject Prefab5;
+    public GameObject Prefab6;
     public float radius = 1;
     public Vector2 regionSize = Vector2.one;
     public int rejectionSamples = 30;
@@ -23,6 +24,7 @@ public class GenerateFoods : MonoBehaviour
         prefabList.Add(Prefab3);
         prefabList.Add(Prefab4);
         prefabList.Add(Prefab5);
+        prefabList.Add(Prefab6);
 
         points = PoissonDisc.GeneratePoints(radius, regionSize, rejectionSamples);
 
