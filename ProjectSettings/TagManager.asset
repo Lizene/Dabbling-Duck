@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Good Food
   - Bad Food
+  - Head
   layers:
   - Default
   - TransparentFX
@@ -15,7 +16,7 @@ TagManager:
   - UI
   - Food
   - Detect
-  - 
+  - Head
   - 
   - 
   - 
