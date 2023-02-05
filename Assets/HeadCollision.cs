@@ -8,6 +8,11 @@ public class HeadCollision : MonoBehaviour
     float splitTime;
     int splitEveryXFood;
     GameManager gameManager;
+
+    [SerializeField] private AudioClip[] goodFoodSound;
+    [SerializeField] private AudioClip[] badFoodSound; 
+    [SerializeField] private AudioSource audioSource;
+
     void Start()
     {
         headScript = GetComponentInParent<DuckHead>();
@@ -30,6 +35,7 @@ public class HeadCollision : MonoBehaviour
             Destroy(collision.gameObject);
             headScript.foodSeen = false;
             gameManager.EatFood();
+            PlayRandomClip(goodFoodSound);
             if (gameManager.foodEaten % splitEveryXFood == 0)
             {
                 headScript.Split();
@@ -40,6 +46,7 @@ public class HeadCollision : MonoBehaviour
             Destroy(collision.gameObject);
             headScript.foodSeen = false;
             gameManager.LoseLife();
+            PlayRandomClip(badFoodSound);
         }
         else if (collision.gameObject.CompareTag("Head"))
         {
@@ -50,5 +57,10 @@ public class HeadCollision : MonoBehaviour
             headScript.moveDir = Vector2.Reflect(headScript.moveDir, collisionNormal);
             headScript.splitTimer = splitTime;
         }
+    }
+    private void PlayRandomClip(AudioClip[] clips) {
+        int randomIndex = Random.Range(0, clips.Length);
+        audioSource.clip = clips[randomIndex];
+        audioSource.Play();
     }
 }
