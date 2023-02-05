@@ -26,6 +26,11 @@ public class DuckHead : MonoBehaviour
     private bool headOpenLastFrame;
     Sprite closedHeadSprite;
 
+    [SerializeField] private AudioClip[] goodFoodSound;
+    [SerializeField] private AudioClip[] badFoodSound; 
+    [SerializeField] private AudioSource audioSource;
+
+
     void Start()
     {
         detectCircle = transform.GetChild(0);
@@ -35,6 +40,8 @@ public class DuckHead : MonoBehaviour
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         spriteRend = GetComponent<SpriteRenderer>();
         closedHeadSprite = spriteRend.sprite;
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -79,7 +86,7 @@ public class DuckHead : MonoBehaviour
         else
         {
             controlled = false;
-            if (targetedFood = null) { foodSeen = false; }
+            if (targetedFood == null) { foodSeen = false; }
             if (foodSeen)
             {
                 var duckToFood = targetedFood.transform.position - transform.position;
@@ -134,12 +141,19 @@ public class DuckHead : MonoBehaviour
             Destroy(collision.gameObject);
             foodSeen = false;
             gameManager.EatFood();
+            PlayRandomClip(goodFoodSound);
         }
         else if (collision.gameObject.CompareTag("Bad Food"))
         {
             Destroy(collision.gameObject);
             foodSeen = false;
             gameManager.LoseLife();
+            PlayRandomClip(badFoodSound);
         }
+    }
+    private void PlayRandomClip(AudioClip[] clips) {
+        int randomIndex = Random.Range(0, clips.Length);
+        audioSource.clip = clips[randomIndex];
+        audioSource.Play();
     }
 }
